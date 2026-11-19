@@ -1,4 +1,4 @@
-# Kalkulator Android Native (Java/Kotlin + XML)
+# Kalkulator Android Native (Java + XML)
 
 Aplikasi kalkulator native Android sederhana tanpa WebView, berukuran sangat ringan (~21 KB) dan hemat memori, dibuat dengan antarmuka Material modern (*dark sleek theme*).
 
@@ -13,23 +13,29 @@ Aplikasi kalkulator native Android sederhana tanpa WebView, berukuran sangat rin
   - Evaluasi ekspresi otomatis yang mematuhi urutan operasi (KABATAKU: perkalian & pembagian dieksekusi lebih dahulu).
   - Penanganan pembagian dengan nol (*error safety*).
   - Format angka presisi tinggi tanpa trailing zero.
+- **Otomatisasi CI/CD (GitHub Actions)**: Setiap kali Anda melakukan `git push` ke branch `main`, GitHub akan otomatis mengompilasi APK dan menyediakannya sebagai artefak unduhan.
 
 ## Struktur Proyek
 
 ```
 kalkulator-android/
-├── build_apk.sh               # Script build otomatis on-device (aapt, ecj/javac, d8, apksigner)
+├── .github/workflows/
+│   └── android-build.yml      # CI/CD: Otomatis build APK saat push ke GitHub
+├── gradle/wrapper/
+│   ├── gradle-wrapper.jar
+│   └── gradle-wrapper.properties
+├── gradlew                    # Gradle wrapper script
+├── build_apk.sh               # Script build mandiri on-device (aapt, javac, d8, apksigner)
 ├── debug.keystore             # Keystore debug untuk penandatanganan APK
 ├── app/
 │   ├── build/bin/
-│   │   └── kalkulator.apk     # APK hasil build (siap install)
+│   │   └── kalkulator.apk     # APK hasil build lokal
 │   ├── build.gradle.kts
 │   └── src/
 │       └── main/
 │           ├── AndroidManifest.xml
 │           ├── java/com/example/kalkulator/
-│           │   ├── MainActivity.java
-│           │   └── MainActivity.kt
+│           │   └── MainActivity.java
 │           └── res/
 │               ├── drawable/
 │               │   ├── bg_btn_function.xml
@@ -45,13 +51,23 @@ kalkulator-android/
 └── settings.gradle.kts
 ```
 
-## Cara Build Ulang APK
+## Cara Kerja CI/CD GitHub Actions
+
+1. Lakukan perubahan pada kode aplikasi.
+2. Commit dan push ke GitHub:
+   ```bash
+   git add .
+   git commit -m "Update fitur"
+   git push
+   ```
+3. Buka tab **Actions** di repositori GitHub Anda.
+4. Tunggu workflow **Build Android APK** selesai (~1-2 menit).
+5. Unduh file `kalkulator-debug-apk.zip` pada bagian **Artifacts** di halaman detail run.
+
+## Cara Build Lokal On-Device
 
 Jalankan script build langsung di terminal Android:
 ```bash
 bash build_apk.sh
 ```
-
-Hasil APK akan otomatis disimpan di:
-- `app/build/bin/kalkulator.apk`
-- Serta dapat disalin ke `/storage/emulated/0/Download/kalkulator.apk` untuk kemudahan instalasi di smartphone.
+File APK akan otomatis ter-generate di `app/build/bin/kalkulator.apk`.
