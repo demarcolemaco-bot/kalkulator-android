@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.Kalkulator" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/calc_background</item>
+        <item name="android:windowBackground">@color/calc_background</item>
+    </style>
+</resources>
